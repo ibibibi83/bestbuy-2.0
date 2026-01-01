@@ -29,6 +29,38 @@ class Product:
 
         return total_price
 
-    def __str__(self) -> str:
+    def show(self) -> str:
         return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
 
+    def __str__(self) -> str:
+        return self.show()
+
+
+class NonStockedProduct(Product):
+    def __init__(self, name: str, price: float):
+        super().__init__(name, price, quantity=0)
+        self.active = True
+
+    def buy(self, quantity: int) -> float:
+        if quantity <= 0:
+            raise Exception("Quantity must be greater than zero")
+        return self.price * quantity
+
+    def show(self) -> str:
+        return f"{self.name} (Non-stocked), Price: {self.price}"
+
+
+class LimitedProduct(Product):
+    def __init__(self, name: str, price: float, quantity: int, maximum: int):
+        super().__init__(name, price, quantity)
+        if maximum <= 0:
+            raise Exception("Maximum must be greater than zero")
+        self.maximum = maximum
+
+    def buy(self, quantity: int) -> float:
+        if quantity > self.maximum:
+            raise Exception("Cannot buy more than allowed maximum")
+        return super().buy(quantity)
+
+    def show(self) -> str:
+        return f"{self.name} (Limited to {self.maximum}), Price: {self.price}, Quantity: {self.quantity}"
