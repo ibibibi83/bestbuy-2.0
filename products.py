@@ -8,20 +8,35 @@ class Product:
             raise Exception("Quantity cannot be negative")
 
         self.name = name
-        self.price = price
+        self._price = price
         self.quantity = quantity
         self.active = quantity > 0
-        self.promotion = None
+        self._promotion = None
+
+    # ---------- PROPERTIES ----------
+
+    @property
+    def price(self):
+        return self._price
+
+    @price.setter
+    def price(self, value):
+        if value < 0:
+            raise Exception("Price cannot be negative")
+        self._price = value
+
+    @property
+    def promotion(self):
+        return self._promotion
+
+    @promotion.setter
+    def promotion(self, promotion):
+        self._promotion = promotion
+
+    # ---------- BUSINESS LOGIC ----------
 
     def is_active(self) -> bool:
         return self.active
-
-    # Promotion setter / getter
-    def set_promotion(self, promotion):
-        self.promotion = promotion
-
-    def get_promotion(self):
-        return self.promotion
 
     def buy(self, quantity: int) -> float:
         if quantity <= 0:
@@ -29,7 +44,6 @@ class Product:
         if quantity > self.quantity:
             raise Exception("Not enough stock available")
 
-        # Promotion berücksichtigen
         if self.promotion:
             total_price = self.promotion.apply_promotion(self, quantity)
         else:
@@ -42,7 +56,9 @@ class Product:
 
         return total_price
 
-    def show(self) -> str:
+    # ---------- MAGIC METHODS ----------
+
+    def __str__(self) -> str:
         promo_text = ""
         if self.promotion:
             promo_text = f" | Promotion: {self.promotion.name}"
@@ -54,8 +70,14 @@ class Product:
             f"{promo_text}"
         )
 
-    def __str__(self) -> str:
-        return self.show()
+    def __gt__(self, other):
+        return self.price > other.price
+
+    def __lt__(self, other):
+        return self.price < other.price
+
+
+# =====================================================
 
 
 class NonStockedProduct(Product):
@@ -72,12 +94,15 @@ class NonStockedProduct(Product):
 
         return self.price * quantity
 
-    def show(self) -> str:
+    def __str__(self) -> str:
         promo_text = ""
         if self.promotion:
             promo_text = f" | Promotion: {self.promotion.name}"
 
         return f"{self.name} (Non-stocked), Price: {self.price}{promo_text}"
+
+
+# =====================================================
 
 
 class LimitedProduct(Product):
@@ -92,7 +117,7 @@ class LimitedProduct(Product):
             raise Exception("Cannot buy more than allowed maximum")
         return super().buy(quantity)
 
-    def show(self) -> str:
+    def __str__(self) -> str:
         promo_text = ""
         if self.promotion:
             promo_text = f" | Promotion: {self.promotion.name}"

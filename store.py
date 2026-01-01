@@ -1,23 +1,25 @@
-class Store:
-    def __init__(self):
-        self.products = []
+from products import Product
 
-    def add_product(self, product):
+
+class Store:
+    def __init__(self, products=None):
+        if products is None:
+            products = []
+
+        self.products = products
+
+    def add_product(self, product: Product):
         self.products.append(product)
 
-    def list_products(self):
-        for product in self.products:
-            print(product)
+    def remove_product(self, product: Product):
+        self.products.remove(product)
 
-    def get_total_quantity(self):
-        total = 0
-        for product in self.products:
-            total += product.quantity
-        return total
+    def get_all_products(self):
+        return [product for product in self.products if product.is_active()]
 
-    def order(self, product_name: str, quantity: int) -> float:
-        for product in self.products:
-            if product.name.lower() == product_name.lower():
-                return product.buy(quantity)
+    def get_total_quantity(self) -> int:
+        return sum(product.quantity for product in self.products)
 
-        raise Exception("Product not found")
+    # BONUS: in-Operator
+    def __contains__(self, product):
+        return product in self.products
