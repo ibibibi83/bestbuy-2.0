@@ -1,7 +1,5 @@
 # Python cache
 __pycache__/
+.pytest_cache
 *.pyc
-
-# Optional: lokale Tools / Builds
-bestbuy-2.0/
-
+/tests/__pycache__
