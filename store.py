@@ -113,18 +113,6 @@ class Store:
         """
         return product in self.products
 
-    def calculate_price(self, quantity: int, price: float) -> float:
-        """
-        Calculates the total price based on quantity and unit price.
-
-        Args:
-            quantity (int): The number of units.
-            price (float): The price per unit.
-
-        Returns:
-             float: The total calculated price.
-        """   
-        return quantity * price
     
     def get_product_by_name(self, product_name: str) -> Product:
         """

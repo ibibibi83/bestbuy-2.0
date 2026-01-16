@@ -8,7 +8,7 @@ and exit the application.
 
 from product import Product,NonStockedProduct,LimitedProduct
 from store import Store
-
+from promotion import SecondHalfPrice, ThirdOneFree, PercentDiscount
 
 def print_products(store: Store) -> None:
     """
@@ -50,15 +50,14 @@ def command_make_order(store: Store):
   """
   product_name = input("Which product do you want to buy? ").strip()
   product = store.get_product_by_name(product_name)
+  
   if product:
+    
     quantity = int(input("How many do you want? "))
 
-    try:
-      store.remove_product(product, quantity)
-      total_price = store.calculate_price(quantity, product.price)
-      print(f"Total price: {total_price}$")
-    except Exception as e:
-      print(e)
+    total_price = product.buy(quantity)
+    print(f"Total price: {total_price:.2f} $")
+    store.remove_product(product, quantity)
   else:
     print(f"The product '{product_name}' is not available")
 
@@ -86,6 +85,17 @@ def main() -> None:
                     NonStockedProduct("Windows License", price=125),
                     LimitedProduct("Shipping", price=10, quantity=250, maximum=1)
                 ]
+
+    # Create promotion catalog
+    second_half_price = SecondHalfPrice("Second Half price!")
+    third_one_free = ThirdOneFree("Third One Free!")
+    thirty_percent = PercentDiscount("30% off!", percent=30)
+
+    # Add promotions to products
+    product_list[0].promotion = second_half_price
+    product_list[1].promotion = third_one_free
+    product_list[3].promotion = thirty_percent
+
     store = Store(product_list)
 
     while True:
