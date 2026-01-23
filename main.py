@@ -21,8 +21,12 @@ def print_products(store: Store) -> None:
         None
     """
     products = store.get_all_products()
-    for product in products:
-        print(f"{product.name}: {product.price}$, amount: {product.quantity}")
+    print("------")
+    for i in range(len(products)):
+        print(f"""{i + 1}: {products[i].name}: {products[i].price}$, 
+amount: {products[i].quantity}, 
+promotion: {products[i].promotion.name if products[i].promotion else None}""")
+    print("------")
 
 def print_total_quantity(store: Store) -> None:
   """
@@ -47,19 +51,24 @@ def command_make_order(store: Store):
   Args:
       store (Store): The store instance used to retrieve products
           and process the order.
+  
   """
-  product_name = input("Which product do you want to buy? ").strip()
-  product = store.get_product_by_name(product_name)
+  print_products(store)
+  product_id = int(input("Which product do you want to buy? ").strip()) - 1
+  product = store.get_product_by_id(product_id)
   
   if product:
-    
+    #print(product)
     quantity = int(input("How many do you want? "))
-
-    total_price = product.buy(quantity)
-    print(f"Total price: {total_price:.2f} $")
+    try:
+        total_price = product.buy(quantity)
+    except Exception:
+        print("Not enough items to buy!")
+        return
     store.remove_product(product, quantity)
+    print(f"Total price: {total_price:.2f} $")     
   else:
-    print(f"The product '{product_name}' is not available")
+    print(f"The product with id :'{product_id}' is not available")
 
 def main() -> None:
     """
@@ -72,9 +81,6 @@ def main() -> None:
     Returns:
         None
     """
-    #store = Store()
-
-    #store.add_product(Product("Laptop", 1000, 5))
     #store.add_product(Product("Mouse", 50, 10))
     #store.add_product(Product("Keyboard", 80, 7))
 
@@ -97,6 +103,8 @@ def main() -> None:
     product_list[3].promotion = thirty_percent
 
     store = Store(product_list)
+    store.add_product(Product("Laptop", 1000, 5))
+    store.add_product(Product("Laptop", 0, 6))
 
     while True:
         print("\nStore Menu")

@@ -42,6 +42,15 @@ class Store:
         Returns:
             None
         """
+        if product.quantity < 1:
+            print("The amount must be greater than 1")
+            return
+        if product.price <= 0:
+            print("Price must be postitiv! ")
+            return     
+        if any(p.name == product.name for p in self.products):
+            print("Product already exists ")  
+            return 
         self.products.append(product)
 
     def remove_product(self, product: Product, quantity: int) -> None:
@@ -62,13 +71,11 @@ class Store:
             None
         """
         for p in self.products:
+            #print(p,product, p == product)
             if p == product:
-                if p.quantity > quantity:
-                    p.quantity -= quantity
-                elif p.quantity == quantity:
+                if p.quantity == quantity:
                     self.products.remove(product)
-                else:
-                    print("There is to less products in store! ")
+                    
 
     def get_all_products(self) -> list:
         """
@@ -95,42 +102,21 @@ class Store:
             int: The total quantity of all products in the store.
         """
         return sum(product.quantity for product in self.products)
-
-    # BONUS: in-Operator
-    def __contains__(self, product: Product) -> bool:
-        """
-        Checks whether a given product exists in the store.
-
-        This method enables the use of the `in` keyword to determine
-        if a specific Product instance is present in the store's
-        product list.
-
-        Args:
-            product (Product): The product to check for in the store.
-
-        Returns:
-            bool: True if the product exists in the store, False otherwise.
-        """
-        return product in self.products
-
     
-    def get_product_by_name(self, product_name: str) -> Product:
+    def get_product_by_id(self, product_id: int) -> Product:
         """
-        Retrieves an active product from the store by its name.
+        Retrieves an active product from the store by its id.
 
         The search is case-insensitive and only considers active
         products returned by `get_all_products()`.
 
         Args:
-            product_name (str): The name of the product to search for.
+            product_name (id): The name of the product to search for.
 
         Returns:
             Product: The matching Product object if found, otherwise None.
         """ 
-        products = self.get_all_products()
-        
-        product = next(
-            (p for p in products if p.name.lower() == product_name.lower()),
-            None
-        )
+        if product_id > len(self.products):
+            return None        
+        product = self.products[product_id]
         return product
